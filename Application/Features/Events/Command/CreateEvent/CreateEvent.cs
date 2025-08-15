@@ -1,18 +1,19 @@
 using Application.Common.Interface;
+using Application.Features.Events.Command.CreateEvent;
 using MediatR;
 
 namespace Application.Events.Command.CreateEvent;
 
-public class CreateEventCommand : IRequest<int>
+public class CreateEventCommand : IRequest<EventDto>
 {
     public string Name { get; set; }
     public string Venue { get; set; }
     public int UserId { get; set; }
 }
 
-public class CreateEvent(IEventService eventService) : IRequestHandler<CreateEventCommand, int>
+public class CreateEvent(IEventService eventService) : IRequestHandler<CreateEventCommand, EventDto>
 {
-    public async Task<int> Handle(CreateEventCommand request, CancellationToken cancellationToken)
+    public async Task<EventDto> Handle(CreateEventCommand request, CancellationToken cancellationToken)
     {
         var eventDetails = new EventDetails
         {
@@ -20,7 +21,7 @@ public class CreateEvent(IEventService eventService) : IRequestHandler<CreateEve
             Venue = request.Venue,
             UserId = request.UserId
         };
-        var eventId = await eventService.CreateEventAsync(eventDetails, cancellationToken);
-        return eventId;
+        var eventEntity = await eventService.CreateEventAsync(eventDetails, cancellationToken);
+        return eventEntity;
     }
 }
