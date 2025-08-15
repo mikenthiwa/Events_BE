@@ -1,3 +1,5 @@
+using Application.Features.Events.Command.CreateEvent;
+using Application.Model;
 using Domain.Entities;
 
 namespace Application.Common.Interface;
@@ -12,5 +14,6 @@ public class EventDetails
 
 public interface IEventService
 {
-    public Task<int> CreateEventAsync(EventDetails eventDetails, CancellationToken cancellationToken);
+    public Task<EventDto> CreateEventAsync(EventDetails eventDetails, CancellationToken cancellationToken);
+    public Task<PaginatedList<EventDto>> GetEventsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken);
 }

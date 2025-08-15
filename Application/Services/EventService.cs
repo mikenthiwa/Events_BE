@@ -1,12 +1,17 @@
 using Application.Common.Interface;
-using Application.Interface;
+using Application.Features.Events.Command.CreateEvent;
+using AutoMapper.QueryableExtensions;
+
+using Application.Mappings;
+using Application.Model;
+using AutoMapper;
 using Domain.Entities;
 
 namespace Application.Services;
 
-public class EventService(IApplicationDbContext applicationDbContext) : IEventService
+public class EventService(IApplicationDbContext applicationDbContext, IMapper _mapper) : IEventService
 {
-    public async Task<int> CreateEventAsync(EventDetails eventDetails, CancellationToken cancellationToken)
+    public async Task<EventDto> CreateEventAsync(EventDetails eventDetails, CancellationToken cancellationToken)
     {
         var eventEntity = new Event()
         {
@@ -17,6 +22,15 @@ public class EventService(IApplicationDbContext applicationDbContext) : IEventSe
 
         applicationDbContext.Events.Add(eventEntity);
         await applicationDbContext.SaveChangesAsync(cancellationToken);
-        return eventEntity.Id;
+        return _mapper.Map<EventDto>(eventEntity);
+    }
+
+    public async Task<PaginatedList<EventDto>> GetEventsAsync(int pageNumber, int pageSize,
+        CancellationToken cancellationToken)
+    {
+        return await applicationDbContext.Events
+            .OrderBy(e => e.Id)
+            .ProjectTo<EventDto>(_mapper.ConfigurationProvider)
+            .PaginatedListAsync(pageNumber, pageSize, cancellationToken);
     }
 }

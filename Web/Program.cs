@@ -29,6 +29,8 @@ app.RegisterEventEndpoints();
 app.UseHttpsRedirection();
 
 app.UseExceptionHandler();
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 

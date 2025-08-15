@@ -3,9 +3,11 @@ using Application.Common.Helper;
 using Application.Common.Interface;
 using Application.Common.Model;
 using Application.Interface;
+using Application.Mappings;
 using Application.Services;
 using Application.Validation;
 using FluentValidation;
+using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
@@ -17,6 +19,7 @@ public static class DependencyInjection
     public static void AddApplication(this IHostApplicationBuilder builder)
     {
         var assembly = Assembly.GetExecutingAssembly();
+        builder.Services.AddAutoMapper(assembly);
         builder.Services.AddFluentValidationAutoValidation(configuration =>
         {
             configuration.OverrideDefaultResultFactoryWith<CustomResultFactory>();
@@ -32,5 +35,6 @@ public static class DependencyInjection
         builder.Services.AddScoped<TokenService>();
         builder.Services.AddTransient<AppUser>();
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddJwtAuthentication(builder.Configuration);
     }
 }
